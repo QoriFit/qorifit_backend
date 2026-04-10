@@ -5,6 +5,7 @@ import com.cibertec.backend.qorifit.infraestructure.persistence.jpa.repository.M
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,5 +29,9 @@ public class MealLogRepoImpl {
 
     public void deleteById(Long id) {
         repository.deleteById(id);
+    }
+
+    public List<MealLogEntity> findByUserIdAndDate(Long userId, LocalDate date) {
+        return repository.findByUserIdAndDate(userId, date);
     }
 }

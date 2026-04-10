@@ -1,35 +1,56 @@
 package com.cibertec.backend.qorifit.infraestructure.web.controller;
 
+import com.cibertec.backend.qorifit.application.service.CalorieUseCase;
 import com.cibertec.backend.qorifit.infraestructure.web.dto.ApiResponse;
-import com.cibertec.backend.qorifit.infraestructure.web.dto.request.IngredientRequest;
-import com.cibertec.backend.qorifit.infraestructure.web.dto.request.RecipeRequest;
+import com.cibertec.backend.qorifit.infraestructure.web.dto.request.LogCaloriesRequest;
+import com.cibertec.backend.qorifit.infraestructure.web.dto.response.CalorieSummaryResponse;
+import com.cibertec.backend.qorifit.utils.InternalCodes;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
+import java.time.LocalDate;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/calories")
 public class CaloriesController {
 
-//    @GetMapping("/ingredients")
-//    public ResponseEntity<ApiResponse<?>> getIngredientes(){
-//
-//    }
-//
-//    @GetMapping("/recipes")
-//    public ResponseEntity<ApiResponse<?>> getRecipes(){}
-//
-//    @PostMapping("/register")
-//    public ResponseEntity<ApiResponse<?>> registerCalories(
-//            @RequestBody List<RecipeRequest> recipes,
-//            @RequestBody List<IngredientRequest> ingredients
-//    ){
-//
-//    }
+    private final CalorieUseCase calorieUseCase;
 
+    @PostMapping
+    public ResponseEntity<ApiResponse<?>> logMeal(
+            @RequestBody @Valid LogCaloriesRequest request
+    ) {
+        Long userId = extractUserId();
+        calorieUseCase.logMeal(userId, request);
 
+        return ResponseEntity.ok(ApiResponse.<Void>builder()
+                .code(InternalCodes.SUCCESS.getCode())
+                .message("Meal logged successfully")
+                .build());
+    }
+
+    @GetMapping("/summary")
+    public ResponseEntity<ApiResponse<CalorieSummaryResponse>> getSummary(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
+    ) {
+        Long userId = extractUserId();
+        CalorieSummaryResponse summary = calorieUseCase.getSummary(userId, date);
+
+        return ResponseEntity.ok(ApiResponse.<CalorieSummaryResponse>builder()
+                .code(InternalCodes.SUCCESS.getCode())
+                .data(summary)
+                .message("Summary retrieved")
+                .build());
+    }
+
+    private Long extractUserId() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return (Long) auth.getPrincipal();
+    }
 }

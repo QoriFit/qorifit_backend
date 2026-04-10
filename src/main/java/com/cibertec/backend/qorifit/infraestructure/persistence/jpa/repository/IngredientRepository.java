@@ -15,4 +15,6 @@ public interface IngredientRepository extends JpaRepository<IngredientEntity, Lo
     IngredientEntity save(IngredientEntity entity);
 
     void deleteById(Long id);
+
+
 }
