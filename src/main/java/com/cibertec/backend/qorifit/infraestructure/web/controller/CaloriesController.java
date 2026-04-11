@@ -16,6 +16,7 @@ import java.time.LocalDate;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/calories")
+@CrossOrigin(origins = "*")
 public class CaloriesController {
 
     private final CalorieUseCase calorieUseCase;
