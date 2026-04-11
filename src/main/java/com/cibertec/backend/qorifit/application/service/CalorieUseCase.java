@@ -33,7 +33,7 @@ public class CalorieUseCase {
         UserEntity user = userRepoImpl.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found: " + userId));
 
-        // Log each ingredient entry
+    // Log each ingredient entry
         for (LogCaloriesRequest.IngredientLogItem item : request.ingredients()) {
 
             IngredientEntity ingredient = ingredientRepoImpl.findById(item.ingredientId())
