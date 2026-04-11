@@ -26,8 +26,7 @@ public class CaloriesController {
     public ResponseEntity<ApiResponse<?>> logMeal(
             @RequestBody @Valid LogCaloriesRequest request
     ) {
-        Long userId = extractUserId();
-        calorieUseCase.logMeal(userId, request);
+        calorieUseCase.logMeal(request);
 
         return ResponseEntity.ok(ApiResponse.<Void>builder()
                 .code(InternalCodes.SUCCESS.getCode())
@@ -39,18 +38,12 @@ public class CaloriesController {
     public ResponseEntity<ApiResponse<CalorieSummaryResponse>> getSummary(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
     ) {
-        Long userId = extractUserId();
-        CalorieSummaryResponse summary = calorieUseCase.getSummary(userId, date);
+        CalorieSummaryResponse summary = calorieUseCase.getSummary(date);
 
         return ResponseEntity.ok(ApiResponse.<CalorieSummaryResponse>builder()
                 .code(InternalCodes.SUCCESS.getCode())
                 .data(summary)
                 .message("Summary retrieved")
                 .build());
-    }
-
-    private Long extractUserId() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return (Long) auth.getPrincipal();
     }
 }

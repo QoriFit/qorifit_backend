@@ -11,14 +11,9 @@ import java.util.Optional;
 
 public interface UserCountryRepository extends JpaRepository<UserCountryEntity, Long> {
 
-    Optional<UserCountryEntity> findById(Long id);
-
-    List<UserCountryEntity> findAll();
-
     @Query("SELECT uc FROM UserCountryEntity uc WHERE uc.isActive = true")
     List<UserCountryEntity> findAllActive();
 
-    UserCountryEntity save(UserCountryEntity entity);
 
     @Modifying
     @Query("UPDATE UserCountryEntity uc SET uc.isActive = false WHERE uc.id = ?1")

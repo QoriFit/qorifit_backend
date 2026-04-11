@@ -4,11 +4,9 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 
-public record StepsRegister(
+public record StepsDateRange(
         @NotNull
-        LocalDate date,
-
-        @NotNull
-        Long stepCount
+        LocalDate startDate,
+        LocalDate endDate
 ) {
 }

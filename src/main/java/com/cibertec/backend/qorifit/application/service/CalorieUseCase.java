@@ -1,5 +1,6 @@
 package com.cibertec.backend.qorifit.application.service;
 
+import com.cibertec.backend.qorifit.application.helper.ContextHelper;
 import com.cibertec.backend.qorifit.infraestructure.persistence.jpa.entity.IngredientEntity;
 import com.cibertec.backend.qorifit.infraestructure.persistence.jpa.entity.MealLogEntity;
 import com.cibertec.backend.qorifit.infraestructure.persistence.jpa.entity.RecipeEntity;
@@ -27,8 +28,11 @@ public class CalorieUseCase {
     private final RecipeRepoImpl recipeRepoImpl;
     private final UserRepoImpl userRepoImpl;
     private final NutritionCalculatorService nutritionCalculator;
+    private final ContextHelper contextHelper;
 
-    public void logMeal(Long userId, LogCaloriesRequest request) {
+    public void logMeal(LogCaloriesRequest request) {
+
+        Long userId = contextHelper.extractUserId();
 
         UserEntity user = userRepoImpl.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found: " + userId));
@@ -74,7 +78,9 @@ public class CalorieUseCase {
         }
     }
 
-    public CalorieSummaryResponse getSummary(Long userId, LocalDate date) {
+    public CalorieSummaryResponse getSummary(LocalDate date) {
+
+        Long userId = contextHelper.extractUserId();
 
         List<MealLogEntity> logs = mealLogRepoImpl.findByUserIdAndDate(userId, date);
 

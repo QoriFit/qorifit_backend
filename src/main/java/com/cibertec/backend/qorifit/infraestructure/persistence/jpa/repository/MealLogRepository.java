@@ -11,14 +11,6 @@ import java.util.Optional;
 
 public interface MealLogRepository extends JpaRepository<MealLogEntity, Long> {
 
-    Optional<MealLogEntity> findById(Long id);
-
-    List<MealLogEntity> findAll();
-
-    MealLogEntity save(MealLogEntity entity);
-
-    void deleteById(Long id);
-
     @Query("SELECT ml FROM MealLogEntity ml WHERE ml.user.id = :userId AND ml.date = :date")
     List<MealLogEntity> findByUserIdAndDate(
             @Param("userId") Long userId,

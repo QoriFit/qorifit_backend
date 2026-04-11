@@ -11,14 +11,10 @@ import java.util.Optional;
 
 public interface ReminderRepository extends JpaRepository<ReminderEntity, Long> {
 
-    Optional<ReminderEntity> findById(Long id);
-
-    List<ReminderEntity> findAll();
 
     @Query("SELECT r FROM ReminderEntity r WHERE r.isActive = true")
     List<ReminderEntity> findAllActive();
 
-    ReminderEntity save(ReminderEntity entity);
 
     @Modifying
     @Query("UPDATE ReminderEntity r SET r.isActive = false WHERE r.id = ?1")

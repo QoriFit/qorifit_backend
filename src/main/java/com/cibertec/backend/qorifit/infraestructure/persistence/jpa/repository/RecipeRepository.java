@@ -11,14 +11,10 @@ import java.util.Optional;
 
 public interface RecipeRepository extends JpaRepository<RecipeEntity, Long> {
 
-    Optional<RecipeEntity> findById(Long id);
-
-    List<RecipeEntity> findAll();
 
     @Query("SELECT r FROM RecipeEntity r WHERE r.isActive = true")
     List<RecipeEntity> findAllActive();
 
-    RecipeEntity save(RecipeEntity entity);
 
     @Modifying
     @Query("UPDATE RecipeEntity r SET r.isActive = false WHERE r.id = ?1")
