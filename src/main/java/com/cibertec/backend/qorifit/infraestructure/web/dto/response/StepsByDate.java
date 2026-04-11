@@ -6,7 +6,6 @@ import java.time.LocalDate;
 
 @Data
 @Builder
-@RequiredArgsConstructor
 @NoArgsConstructor
 @AllArgsConstructor
 public class StepsByDate {

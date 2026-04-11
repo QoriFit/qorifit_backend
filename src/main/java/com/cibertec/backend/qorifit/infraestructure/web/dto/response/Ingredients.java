@@ -5,17 +5,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.math.BigDecimal;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RecipeCards {
+public class Ingredients {
 
-    private Long id;
-    private String recipeName;
-    private String description;
-    private String imgUrl;
-    private List<Ingredients> ingredients;
+    private String name;
+    private String category;
+    private BigDecimal caloriesPer100g;
 }
