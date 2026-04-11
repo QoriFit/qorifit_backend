@@ -8,6 +8,8 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -30,22 +32,21 @@ public class MealLogEntity {
     @JoinColumn(name = "recipe_id")
     private RecipeEntity recipe;
 
-    @ManyToOne
-    @JoinColumn(name = "ingredient_id")
-    private IngredientEntity ingredient;
-
     @Column(name = "meal_type", length = 50)
     private String mealType;
 
-    @Column(name = "quantity_grams", precision = 6, scale = 2, nullable = false)
-    private BigDecimal quantityGrams;
-
-    @Column(name = "calories", precision = 6, scale = 2, nullable = false)
-    private BigDecimal calories;
+    @Column(name = "total_calories", precision = 6, scale = 2, nullable = false)
+    private BigDecimal totalCalories;
 
     @Column(name = "date", nullable = false)
     private LocalDate date;
 
     @Column(name = "logged_at", updatable = false, insertable = false)
     private LocalDateTime loggedAt;
+
+    @Column(name = "display_name")
+    private String displayName;
+
+    @OneToMany(mappedBy = "mealLog", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MealLogDetailEntity> details = new ArrayList<>();
 }

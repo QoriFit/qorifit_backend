@@ -27,8 +27,5 @@ public record LogCaloriesRequest(
         LocalDate date
 
 ) {
-    public record IngredientLogItem(
-            @NotNull Long ingredientId,
-            @NotNull @DecimalMin("0.1") BigDecimal quantityGrams
-    ) {}
+
 }

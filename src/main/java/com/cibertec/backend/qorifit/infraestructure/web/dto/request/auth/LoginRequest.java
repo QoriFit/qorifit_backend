@@ -1,4 +1,4 @@
-package com.cibertec.backend.qorifit.infraestructure.web.dto.request;
+package com.cibertec.backend.qorifit.infraestructure.web.dto.request.auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

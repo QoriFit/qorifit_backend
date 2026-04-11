@@ -1,22 +1,23 @@
 package com.cibertec.backend.qorifit.application.service;
 
 import com.cibertec.backend.qorifit.application.helper.ContextHelper;
-import com.cibertec.backend.qorifit.infraestructure.persistence.jpa.entity.IngredientEntity;
-import com.cibertec.backend.qorifit.infraestructure.persistence.jpa.entity.MealLogEntity;
-import com.cibertec.backend.qorifit.infraestructure.persistence.jpa.entity.RecipeEntity;
-import com.cibertec.backend.qorifit.infraestructure.persistence.jpa.entity.UserEntity;
+import com.cibertec.backend.qorifit.domain.CustomMeal;
+import com.cibertec.backend.qorifit.domain.Ingredient;
+import com.cibertec.backend.qorifit.infraestructure.persistence.jpa.entity.*;
 import com.cibertec.backend.qorifit.infraestructure.persistence.jpa.repository.impl.IngredientRepoImpl;
 import com.cibertec.backend.qorifit.infraestructure.persistence.jpa.repository.impl.MealLogRepoImpl;
 import com.cibertec.backend.qorifit.infraestructure.persistence.jpa.repository.impl.RecipeRepoImpl;
 import com.cibertec.backend.qorifit.infraestructure.persistence.jpa.repository.impl.UserRepoImpl;
-import com.cibertec.backend.qorifit.infraestructure.web.dto.request.LogCaloriesRequest;
+import com.cibertec.backend.qorifit.infraestructure.web.dto.request.CaloriesRegister;
 import com.cibertec.backend.qorifit.infraestructure.web.dto.response.CalorieSummaryResponse;
 import com.cibertec.backend.qorifit.infraestructure.web.dto.response.MealLogEntryResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -30,52 +31,74 @@ public class CalorieUseCase {
     private final NutritionCalculatorService nutritionCalculator;
     private final ContextHelper contextHelper;
 
-    public void logMeal(LogCaloriesRequest request) {
-
+    @Transactional
+    public void logMeal(@Valid CaloriesRegister request) {
         Long userId = contextHelper.extractUserId();
-
         UserEntity user = userRepoImpl.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found: " + userId));
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-    // Log each ingredient entry
-        for (LogCaloriesRequest.IngredientLogItem item : request.ingredients()) {
+        // 1. Obtener la base calórica de la receta o del input manual
+        BigDecimal baseCals = BigDecimal.ZERO;
+        RecipeEntity recipeEntity = null;
 
-            IngredientEntity ingredient = ingredientRepoImpl.findById(item.ingredientId())
-                    .orElseThrow(() -> new RuntimeException("Ingredient not found: " + item.ingredientId()));
+        if (request.recipeId() != null) {
+            recipeEntity = recipeRepoImpl.findById(request.recipeId())
+                    .orElseThrow(() -> new RuntimeException("Recipe not found"));
 
-            BigDecimal calories = nutritionCalculator
-                    .calculateFromIngredient(ingredient, item.quantityGrams());
-
-            MealLogEntity log = new MealLogEntity();
-            log.setUser(user);
-            log.setIngredient(ingredient);
-            log.setMealType(request.mealType());
-            log.setQuantityGrams(item.quantityGrams());
-            log.setCalories(calories);
-            log.setDate(request.date());
-
-            mealLogRepoImpl.save(log);
+            // Si el usuario no mandó calorías custom, usamos las estimadas de la receta
+            if (request.customCalories() != null) {
+                baseCals = request.customCalories();
+            } else if (recipeEntity.getEstimatedCalories() != null) {
+                baseCals = BigDecimal.valueOf(recipeEntity.getEstimatedCalories());
+            }
+        } else {
+            baseCals = (request.customCalories() != null) ? request.customCalories() : BigDecimal.ZERO;
         }
 
-        // Log each recipe entry
-        for (Long recipeId : request.recipeIds()) {
+        // 2. Mapear ingredientes extra al modelo de dominio para el cálculo
+        List<Ingredient> domainIngredients = request.ingredients().stream()
+                .map(item -> {
+                    IngredientEntity ent = ingredientRepoImpl.findById(item.id())
+                            .orElseThrow(() -> new RuntimeException("Ingredient not found ID: " + item.id()));
+                    // Convertimos el Long del request a BigDecimal para el dominio
+                    return new Ingredient(ent.getCaloriesPer100g(), BigDecimal.valueOf(item.quantity()));
+                }).toList();
 
-            RecipeEntity recipe = recipeRepoImpl.findById(recipeId)
-                    .orElseThrow(() -> new RuntimeException("Recipe not found: " + recipeId));
+        // 3. Crear objeto de dominio (Centraliza la lógica de suma total)
+        CustomMeal domainMeal = new CustomMeal(
+                request.mealName(), // Ahora usamos el nombre que viene del request
+                request.mealType(),
+                LocalDateTime.now(),
+                baseCals,
+                domainIngredients
+        );
 
-            BigDecimal calories = nutritionCalculator
-                    .calculateFromRecipe(recipe, request.quantityGrams());
+        // 4. Crear el Cabezal (MealLogEntity)
+        MealLogEntity logEntity = new MealLogEntity();
+        logEntity.setUser(user);
+        logEntity.setRecipe(recipeEntity);
+        logEntity.setMealType(domainMeal.getMealType().name());
+        logEntity.setTotalCalories(domainMeal.getTotalCalories());
+        logEntity.setDate(LocalDate.now());
+        logEntity.setDisplayName(domainMeal.getCustomName());
 
-            MealLogEntity log = new MealLogEntity();
-            log.setUser(user);
-            log.setRecipe(recipe);
-            log.setMealType(request.mealType());
-            log.setQuantityGrams(request.quantityGrams());
-            log.setCalories(calories);
-            log.setDate(request.date());
+        // 5. Crear los Detalles (MealLogDetailEntity)
+        for (int i = 0; i < domainIngredients.size(); i++) {
+            Ingredient domainIng = domainIngredients.get(i);
+            Long ingredientId = request.ingredients().get(i).id();
 
-            mealLogRepoImpl.save(log);
+            MealLogDetailEntity detail = new MealLogDetailEntity();
+            detail.setIngredientId(ingredientId);
+            detail.setQuantityGrams(domainIng.quantityGrams());
+            detail.setCalories(domainIng.totalCalories());
+
+            // Vinculación para el Cascade de JPA
+            logEntity.getDetails().add(detail);
+            detail.setMealLog(logEntity);
         }
+
+        // 6. Persistencia atómica
+        mealLogRepoImpl.save(logEntity);
     }
 
     public CalorieSummaryResponse getSummary(LocalDate date) {

@@ -2,8 +2,8 @@ package com.cibertec.backend.qorifit.infraestructure.web.controller;
 
 import com.cibertec.backend.qorifit.application.service.AuthUseCase;
 import com.cibertec.backend.qorifit.infraestructure.web.dto.ApiResponse;
-import com.cibertec.backend.qorifit.infraestructure.web.dto.request.LoginRequest;
-import com.cibertec.backend.qorifit.infraestructure.web.dto.request.RegisterRequest;
+import com.cibertec.backend.qorifit.infraestructure.web.dto.request.auth.LoginRequest;
+import com.cibertec.backend.qorifit.infraestructure.web.dto.request.auth.RegisterRequest;
 import com.cibertec.backend.qorifit.infraestructure.web.dto.response.LoginResponse;
 import com.cibertec.backend.qorifit.utils.InternalCodes;
 import jakarta.validation.Valid;

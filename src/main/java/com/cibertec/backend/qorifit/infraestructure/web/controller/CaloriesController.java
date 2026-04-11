@@ -2,6 +2,7 @@ package com.cibertec.backend.qorifit.infraestructure.web.controller;
 
 import com.cibertec.backend.qorifit.application.service.CalorieUseCase;
 import com.cibertec.backend.qorifit.infraestructure.web.dto.ApiResponse;
+import com.cibertec.backend.qorifit.infraestructure.web.dto.request.CaloriesRegister;
 import com.cibertec.backend.qorifit.infraestructure.web.dto.request.LogCaloriesRequest;
 import com.cibertec.backend.qorifit.infraestructure.web.dto.response.CalorieSummaryResponse;
 import com.cibertec.backend.qorifit.utils.InternalCodes;
@@ -23,7 +24,7 @@ public class CaloriesController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<?>> logMeal(
-            @RequestBody @Valid LogCaloriesRequest request
+            @RequestBody @Valid CaloriesRegister request
     ) {
         calorieUseCase.logMeal(request);
 
