@@ -37,6 +37,12 @@ public class RecipeEntity {
     @JoinColumn(name = "country_id")
     private CountryEntity country;
 
+    @Column(name = "image_path")
+    private String imagePath;
+
+    @Column(name = "estimated_calories")
+    private Integer estimatedCalories;
+
     @Column(name = "is_active")
     private Boolean isActive = true;
 
