@@ -30,7 +30,7 @@ public class CaloriesController {
 
         return ResponseEntity.ok(ApiResponse.<Void>builder()
                 .code(InternalCodes.SUCCESS.getCode())
-                .message("Meal logged successfully")
+                .message("Comida registrada exitosamente")
                 .build());
     }
 
@@ -43,7 +43,7 @@ public class CaloriesController {
         return ResponseEntity.ok(ApiResponse.<CalorieSummaryResponse>builder()
                 .code(InternalCodes.SUCCESS.getCode())
                 .data(summary)
-                .message("Summary retrieved")
+                .message("Resumen recibido")
                 .build());
     }
 }
