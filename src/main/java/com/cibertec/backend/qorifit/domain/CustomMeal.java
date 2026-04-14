@@ -40,7 +40,7 @@ public final class CustomMeal {
 
     private BigDecimal calculateFinalTotal() {
         BigDecimal extrasSum = extraIngredients.stream()
-                .map(Ingredient::totalCalories)
+                .map(Ingredient::getTotalCalories)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         return baseCalories.add(extrasSum).setScale(2, RoundingMode.HALF_UP);

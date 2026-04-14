@@ -35,7 +35,4 @@ public class IngredientEntity {
 
     @OneToMany(mappedBy = "ingredient", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RecipeIngredientEntity> recipeIngredients = new ArrayList<>();
-
-    @OneToMany(mappedBy = "ingredient")
-    private List<MealLogEntity> mealLogs = new ArrayList<>();
 }
