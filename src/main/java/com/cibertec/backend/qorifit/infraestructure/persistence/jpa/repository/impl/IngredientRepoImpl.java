@@ -22,6 +22,10 @@ public class IngredientRepoImpl {
         return repository.findAll();
     }
 
+    public List<IngredientEntity> findAllFiltered(String name, String category, String order) {
+        return repository.findAllFiltered(name, category, order);
+    }
+
     public IngredientEntity save(IngredientEntity entity) {
         return repository.save(entity);
     }
