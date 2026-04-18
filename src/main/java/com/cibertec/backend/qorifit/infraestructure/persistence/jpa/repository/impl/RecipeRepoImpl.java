@@ -26,6 +26,11 @@ public class RecipeRepoImpl {
         return repository.findAllActive();
     }
 
+    public List<RecipeEntity> findAllFiltered(Long countryId, String name,
+                                              Boolean popular, Boolean sortByPopularity) {
+        return repository.findAllFiltered(countryId, name, popular, sortByPopularity);
+    }
+
     public RecipeEntity save(RecipeEntity entity) {
         return repository.save(entity);
     }
