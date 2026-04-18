@@ -18,7 +18,7 @@ public class UserData {
     private String profilePicture;
     private Long stepsGoalPerDay;
     private BigDecimal maxCaloriesPerDay;
-    private LocalDate birtDate;
+    private LocalDate birthDate;
     private String goal;
 
 
