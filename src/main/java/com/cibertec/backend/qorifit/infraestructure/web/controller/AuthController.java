@@ -37,14 +37,18 @@ public class AuthController {
     public ResponseEntity<ApiResponse<?>> register(
             @RequestBody @Valid RegisterRequest request
     ){
+
         authUseCase.register(
                 request.username(),
                 request.email(),
                 request.password(),
-                request.age(),
+                request.birthDate(),
                 request.weight(),
                 request.height(),
-                request.goal());
+                request.goal(),
+                request.stepsGoal(),
+                request.maxCaloriesPerDay()
+        );
 
         return ResponseEntity.ok(ApiResponse.<Void>builder()
                 .code(InternalCodes.SUCCESS.getCode())

@@ -4,6 +4,7 @@ import com.cibertec.backend.qorifit.infraestructure.persistence.jpa.entity.UserE
 import com.cibertec.backend.qorifit.infraestructure.persistence.jpa.repository.impl.UserRepoImpl;
 import com.cibertec.backend.qorifit.infraestructure.security.JwtUtils;
 import com.cibertec.backend.qorifit.infraestructure.web.dto.response.LoginResponse;
+import com.cibertec.backend.qorifit.infraestructure.web.dto.response.UserData;
 import com.cibertec.backend.qorifit.infraestructure.web.exception.BusinessException;
 import com.cibertec.backend.qorifit.infraestructure.web.exception.UserNotFoundException;
 import com.cibertec.backend.qorifit.utils.InternalCodes;
@@ -15,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
@@ -49,15 +51,24 @@ public class AuthUseCase {
                 .username(user.getUsername())
                 .email(normalizedEmail)
                 .accessToken(token)
+                .userData(UserData.builder()
+                        .birtDate(user.getBirthdate())
+                        .maxCaloriesPerDay(user.getMaxCaloriesPerDay())
+                        .stepsGoalPerDay(user.getStepsPerDay())
+                        .goal(user.getGoal())
+                        .build())
                 .build();
     }
 
     @Transactional
-    public void register(String username, String email, String password, Long age, BigDecimal weight, BigDecimal height, String goal) {
+    public void register(String username, String email,
+                         String password, LocalDate birthdate,
+                         BigDecimal weight, BigDecimal height,
+                         String goal, Long stepsGoal,
+                         BigDecimal maxCaloriesPerDay) {
 
 
         String normalizedEmail = email.trim().toLowerCase();
-
 
         if (userRepo.findByEmail(normalizedEmail).isPresent()) {
             throw new BusinessException(InternalCodes.DUPLICATED_EMAIL_ADDRESS, "El email ya se encuentra registrado");
@@ -67,8 +78,11 @@ public class AuthUseCase {
                 .username(username)
                 .email(normalizedEmail)
                 .password(passwordEncoder.encode(password))
-                .age(Math.toIntExact(age))
+                .birthdate(birthdate)
                 .height(height)
+                .goal(goal)
+                .stepsPerDay(stepsGoal)
+                .maxCaloriesPerDay(maxCaloriesPerDay)
                 .weight(weight)
                 .isActive(true)
                 .build();

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +38,8 @@ public class UserEntity {
     @Column(name = "goal", length = 50)
     private String goal;
 
-    @Column(name = "age")
-    private Integer age;
+    @Column(name = "birthdate", nullable = false)
+    private LocalDate birthdate;
 
     @Column(name = "weight", precision = 5, scale = 2)
     private BigDecimal weight; // KG
@@ -48,6 +49,14 @@ public class UserEntity {
 
     @Column(name = "is_active")
     private Boolean isActive = true;
+
+    //Meta diaria por dia
+    @Column(name = "steps_per_day", nullable = false)
+    private Long stepsPerDay;
+
+    //Meta, no consumir mas de estas calorías por dia
+    @Column(name = "max_calories", nullable = false)
+    private BigDecimal maxCaloriesPerDay;
 
     @Column(name = "created_at", updatable = false, insertable = false)
     private LocalDateTime createdAt;

@@ -29,8 +29,8 @@ public class RecipeUseCase {
             Long countryId,
             String name,
             Boolean popular,
-            Boolean sortByPopularity,
-            Long userId
+            Boolean sortByPopularity
+            //Long userId
     ) {
         // If no filters are provided AND userId is given, filter by user's goal
         List<RecipeEntity> recipes;
@@ -43,11 +43,11 @@ public class RecipeUseCase {
                     countryId, name, popular,
                     Boolean.TRUE.equals(sortByPopularity)
             );
-        } else if (userId != null) {
-            // No explicit filters — try goal-based filtering
-            UserEntity user = userRepoImpl.findById(userId)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-            recipes = filterByGoal(user.getGoal());
+//        } else if (userId != null) {
+//            // No explicit filters — try goal-based filtering
+//            UserEntity user = userRepoImpl.findById(userId)
+//                    .orElseThrow(() -> new RuntimeException("User not found"));
+//            recipes = filterByGoal(user.getGoal());
         } else {
             recipes = recipeRepoImpl.findAllActive();
         }

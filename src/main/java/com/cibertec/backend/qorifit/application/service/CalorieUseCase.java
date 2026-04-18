@@ -29,7 +29,6 @@ public class CalorieUseCase {
     private final IngredientRepoImpl ingredientRepoImpl;
     private final RecipeRepoImpl recipeRepoImpl;
     private final UserRepoImpl userRepoImpl;
-    private final NutritionCalculatorService nutritionCalculator;
     private final ContextHelper contextHelper;
 
     @Transactional

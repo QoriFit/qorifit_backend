@@ -11,14 +11,14 @@ import java.util.Optional;
 public interface IngredientRepository extends JpaRepository<IngredientEntity, Long> {
 
     @Query("""
-        SELECT i FROM IngredientEntity i
-        WHERE (:name IS NULL OR LOWER(i.name) LIKE LOWER(CONCAT('%', :name, '%')))
-        AND (:category IS NULL OR LOWER(i.category) = LOWER(:category))
-        ORDER BY
-            CASE WHEN :order = 'desc' THEN i.name END DESC,
-            CASE WHEN :order = 'asc'  THEN i.name END ASC,
-            i.name ASC
-    """)
+    SELECT i FROM IngredientEntity i
+    WHERE (CAST(:name AS string) IS NULL OR LOWER(i.name) LIKE LOWER(CONCAT('%', CAST(:name AS string), '%')))
+    AND (CAST(:category AS string) IS NULL OR LOWER(CAST(i.category AS string)) = LOWER(CAST(:category AS string)))
+    ORDER BY
+        CASE WHEN :order = 'desc' THEN i.name END DESC,
+        CASE WHEN :order = 'asc'  THEN i.name END ASC,
+        i.name ASC
+""")
     List<IngredientEntity> findAllFiltered(
             @Param("name")     String name,
             @Param("category") String category,

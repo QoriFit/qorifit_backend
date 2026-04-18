@@ -37,9 +37,9 @@ public class RecipeController {
             @RequestParam(required = false) Boolean popular,
             @RequestParam(required = false) Boolean sortByPopularity
     ) {
-        Long userId = extractUserId();
+//        Long userId = extractUserId();
         List<RecipeSummaryResponse> recipes = recipeUseCase.listRecipes(
-                countryId, name, popular, sortByPopularity, userId
+                countryId, name, popular, sortByPopularity
         );
 
         return ResponseEntity.ok(ApiResponse.<List<RecipeSummaryResponse>>builder()
