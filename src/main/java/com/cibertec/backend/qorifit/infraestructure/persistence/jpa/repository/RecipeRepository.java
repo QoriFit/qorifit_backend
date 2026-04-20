@@ -18,7 +18,6 @@ public interface RecipeRepository extends JpaRepository<RecipeEntity, Long> {
 
 
     //Query de busqueda por nombre, popularidad y país.
-    @Modifying
     @Query("""
         SELECT r FROM RecipeEntity r
         WHERE r.isActive = true

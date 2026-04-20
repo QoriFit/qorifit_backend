@@ -34,6 +34,10 @@ public class StepRepoImpl {
         repository.deleteById(id);
     }
 
+    public java.util.Optional<StepEntity> findByUserIdAndDate(Long userId, LocalDate date) {
+        return repository.findByUserIdAndDate(userId, date);
+    }
+
     public List<StepEntity> getStepsByUserIdAndDatesRange(
             Long userId, LocalDate startDate, LocalDate endDate
     ) {

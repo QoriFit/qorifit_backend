@@ -52,7 +52,7 @@ public class AuthUseCase {
                 .email(normalizedEmail)
                 .accessToken(token)
                 .userData(UserData.builder()
-                        .birtDate(user.getBirthdate())
+                        .birthDate(user.getBirthdate())
                         .maxCaloriesPerDay(user.getMaxCaloriesPerDay())
                         .stepsGoalPerDay(user.getStepsPerDay())
                         .goal(user.getGoal())

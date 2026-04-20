@@ -9,6 +9,7 @@ import com.cibertec.backend.qorifit.infraestructure.persistence.jpa.repository.i
 import com.cibertec.backend.qorifit.infraestructure.persistence.jpa.repository.impl.RecipeRepoImpl;
 import com.cibertec.backend.qorifit.infraestructure.persistence.jpa.repository.impl.UserRepoImpl;
 import com.cibertec.backend.qorifit.infraestructure.web.dto.request.CaloriesRegister;
+import com.cibertec.backend.qorifit.infraestructure.web.dto.request.IngredientLogItem;
 import com.cibertec.backend.qorifit.infraestructure.web.dto.response.CalorieSummaryResponse;
 import com.cibertec.backend.qorifit.infraestructure.web.dto.response.MealLogEntryResponse;
 import jakarta.validation.Valid;
@@ -53,11 +54,14 @@ public class CalorieUseCase {
             baseCals = (request.customCalories() != null) ? request.customCalories() : BigDecimal.ZERO;
         }
 
-        List<Ingredient> domainIngredients = request.ingredients().stream()
+        List<IngredientLogItem> ingredients = request.ingredients() != null
+                ? request.ingredients()
+                : List.of();
+        List<Ingredient> domainIngredients = ingredients.stream()
                 .map(item -> {
-                    IngredientEntity ent = ingredientRepoImpl.findById(item.id())
-                            .orElseThrow(() -> new RuntimeException("Ingredient not found ID: " + item.id()));
-                    return new Ingredient(ent.getCaloriesPer100g(), BigDecimal.valueOf(item.quantity()));
+                    IngredientEntity ent = ingredientRepoImpl.findById(item.ingredientId())
+                            .orElseThrow(() -> new RuntimeException("Ingredient not found ID: " + item.ingredientId()));
+                    return new Ingredient(ent.getCaloriesPer100g(), item.quantityGrams());
                 }).toList();
 
         CustomMeal domainMeal = new CustomMeal(
@@ -73,12 +77,12 @@ public class CalorieUseCase {
         logEntity.setRecipe(recipeEntity);
         logEntity.setMealType(domainMeal.getMealType().name());
         logEntity.setTotalCalories(domainMeal.getTotalCalories());
-        logEntity.setDate(LocalDate.now());
+        logEntity.setDate(request.date() != null ? request.date() : LocalDate.now());
         logEntity.setDisplayName(domainMeal.getCustomName());
 
         for (int i = 0; i < domainIngredients.size(); i++) {
             Ingredient domainIng = domainIngredients.get(i);
-            Long ingredientId = request.ingredients().get(i).id();
+            Long ingredientId = ingredients.get(i).ingredientId();
 
             MealLogDetailEntity detail = new MealLogDetailEntity();
             detail.setIngredientId(ingredientId);

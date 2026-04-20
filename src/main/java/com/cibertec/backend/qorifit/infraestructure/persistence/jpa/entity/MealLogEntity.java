@@ -41,8 +41,13 @@ public class MealLogEntity {
     @Column(name = "date", nullable = false)
     private LocalDate date;
 
-    @Column(name = "logged_at", updatable = false, insertable = false)
+    @Column(name = "logged_at", updatable = false)
     private LocalDateTime loggedAt;
+
+    @PrePersist
+    void prePersist() {
+        if (loggedAt == null) loggedAt = LocalDateTime.now();
+    }
 
     @Column(name = "display_name")
     private String displayName;

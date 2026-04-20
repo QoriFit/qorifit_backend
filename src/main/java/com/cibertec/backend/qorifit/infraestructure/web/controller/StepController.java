@@ -2,14 +2,16 @@ package com.cibertec.backend.qorifit.infraestructure.web.controller;
 
 import com.cibertec.backend.qorifit.application.service.StepsService;
 import com.cibertec.backend.qorifit.infraestructure.web.dto.ApiResponse;
-import com.cibertec.backend.qorifit.infraestructure.web.dto.request.StepsDateRange;
 import com.cibertec.backend.qorifit.infraestructure.web.dto.request.StepsRegister;
 import com.cibertec.backend.qorifit.infraestructure.web.dto.response.StepsByDate;
 import com.cibertec.backend.qorifit.utils.InternalCodes;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 import java.util.List;
 
@@ -38,10 +40,11 @@ public class StepController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<?>> getStepsSummary(
-            @RequestBody @Valid StepsDateRange request
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
     ){
 
-        List<StepsByDate> response = stepsService.getStepsByDates(request.startDate() , request.endDate());
+        List<StepsByDate> response = stepsService.getStepsByDates(startDate, endDate);
 
         return ResponseEntity.ok(ApiResponse.<List<StepsByDate>>builder()
                 .code(InternalCodes.SUCCESS.getCode())

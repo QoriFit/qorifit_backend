@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+API_Endpoints_Postman.md
+CLAUDE.md
+API_Analisis_Bugs.md
+Postman_Tests_README.md
+Qorifit.postman_collection.json
