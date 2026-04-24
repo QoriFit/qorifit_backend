@@ -7,6 +7,7 @@ WORKDIR /app
 COPY . .
 
 RUN MAVEN_OPTS="-Xmx300m" mvn clean package -DskipTests \
+    -Dmaven.test.skip=true \
     -Dmaven.compiler.fork=true \
     -Dmaven.compiler.maxmem=256m \
     -DshowWarnings=false
