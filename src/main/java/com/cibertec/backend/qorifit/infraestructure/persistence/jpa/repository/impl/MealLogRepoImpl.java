@@ -34,4 +34,12 @@ public class MealLogRepoImpl {
     public List<MealLogEntity> findByUserIdAndDate(Long userId, LocalDate date) {
         return repository.findByUserIdAndDate(userId, date);
     }
+
+    public List<MealLogEntity> findByUserIdAndDateSince(Long userId, LocalDate startDate){
+        return repository.findByUserIdAndDateSince(userId, startDate);
+    }
+    public List<MealLogEntity> findByUserIdAndDateRange(Long userId, LocalDate startDate, LocalDate endDate){
+        return repository.findByUserIdAndDateRange(userId, startDate, endDate);
+
+    }
 }

@@ -17,4 +17,20 @@ public interface MealLogRepository extends JpaRepository<MealLogEntity, Long> {
             @Param("date") LocalDate date
     );
 
+    @Query(value = """
+        SELECT * FROM meal_logs 
+        WHERE user_id = :userId 
+        AND date >= :startDate
+        ORDER BY date DESC
+        """, nativeQuery = true)
+    List<MealLogEntity> findByUserIdAndDateSince(Long userId, LocalDate startDate);
+
+
+    @Query(value = """
+        SELECT * FROM meal_logs
+        WHERE user_id = :userId 
+        AND date BETWEEN :startDate AND :endDate
+        ORDER BY date ASC
+        """, nativeQuery = true)
+    List<MealLogEntity> findByUserIdAndDateRange(Long userId, LocalDate startDate, LocalDate endDate);
 }

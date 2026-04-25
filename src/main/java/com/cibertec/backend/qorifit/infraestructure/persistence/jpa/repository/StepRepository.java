@@ -25,13 +25,6 @@ public interface StepRepository extends JpaRepository<StepEntity, Long> {
             @Param("endDate") LocalDate endDate
     );
 
-    @Query(value = "SELECT * FROM steps WHERE user_id = :userId AND date = :date LIMIT 1",
-           nativeQuery = true)
-    java.util.Optional<StepEntity> findByUserIdAndDate(
-            @Param("userId") Long userId,
-            @Param("date") LocalDate date
-    );
-
     // 2. Desde una fecha específica hasta hoy
     @Query(value = """
         SELECT * FROM steps 

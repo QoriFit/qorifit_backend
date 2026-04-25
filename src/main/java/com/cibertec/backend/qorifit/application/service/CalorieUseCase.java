@@ -11,7 +11,10 @@ import com.cibertec.backend.qorifit.infraestructure.persistence.jpa.repository.i
 import com.cibertec.backend.qorifit.infraestructure.web.dto.request.CaloriesRegister;
 import com.cibertec.backend.qorifit.infraestructure.web.dto.request.IngredientLogItem;
 import com.cibertec.backend.qorifit.infraestructure.web.dto.response.CalorieSummaryResponse;
+import com.cibertec.backend.qorifit.infraestructure.web.dto.response.MealLogEntry;
 import com.cibertec.backend.qorifit.infraestructure.web.dto.response.MealLogEntryResponse;
+import com.cibertec.backend.qorifit.infraestructure.web.dto.response.MealSummaryByDate;
+import com.cibertec.backend.qorifit.infraestructure.web.exception.ResourceNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +23,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -96,30 +102,51 @@ public class CalorieUseCase {
         mealLogRepoImpl.save(logEntity);
     }
 
-    public CalorieSummaryResponse getSummary(LocalDate date) {
+    public List<MealSummaryByDate> getMealSummaryByDates(LocalDate startDate, LocalDate endDate) {
 
         Long userId = contextHelper.extractUserId();
 
-        List<MealLogEntity> logs = mealLogRepoImpl.findByUserIdAndDate(userId, date);
+        UserEntity user = userRepoImpl.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
 
-        BigDecimal total = logs.stream()
-                .map(MealLogEntity::getTotalCalories)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        List<MealLogEntity> mealLogs;
 
-        List<MealLogEntryResponse> entries = logs.stream()
-                .map(log -> MealLogEntryResponse.builder()
-                        .logId(log.getId())
-                        .source(resolveSource(log))
-                        .name(resolveName(log))
-                        .mealType(log.getMealType())
-                        .quantityGrams(calculateTotalGrams(log))
-                        .calories(log.getTotalCalories())
-                        .loggedAt(log.getLoggedAt())
-                        .build()
-                )
-                .toList();
+        if (endDate == null) {
+            mealLogs = mealLogRepoImpl.findByUserIdAndDateSince(user.getId(), startDate);
+        } else {
+            mealLogs = mealLogRepoImpl.findByUserIdAndDateRange(user.getId(), startDate, endDate);
+        }
 
-        return new CalorieSummaryResponse(date, total, logs.size(), entries);
+        Map<LocalDate, List<MealLogEntity>> mealsByDateMap = mealLogs.stream()
+                .collect(Collectors.groupingBy(MealLogEntity::getDate));
+
+        LocalDate end = (endDate != null) ? endDate : LocalDate.now();
+
+        List<MealSummaryByDate> mealSummaryByDates = new ArrayList<>();
+
+        for (LocalDate date = startDate; !date.isAfter(end); date = date.plusDays(1)) {
+            List<MealLogEntity> dayLogs = mealsByDateMap.getOrDefault(date, List.of());
+
+            List<MealLogEntry> entries = dayLogs.stream()
+                    .map(log -> MealLogEntry.builder()
+                            .logId(log.getId())
+                            .displayName(log.getDisplayName())
+                            .totalCalories(log.getTotalCalories())
+                            .build())
+                    .toList();
+
+            BigDecimal dailyTotal = dayLogs.stream()
+                    .map(MealLogEntity::getTotalCalories)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            mealSummaryByDates.add(MealSummaryByDate.builder()
+                    .date(date)
+                    .meals(entries)
+                    .totalCalories(dailyTotal)
+                    .build());
+        }
+
+        return mealSummaryByDates;
     }
 
     private String resolveName(MealLogEntity log) {
