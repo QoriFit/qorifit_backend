@@ -34,14 +34,16 @@ public class StepsService {
         UserEntity user = userRepo.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
 
-        StepEntity stepLog = stepRepo.findByUserIdAndDate(userId, request.date())
-                .orElseGet(StepEntity::new);
+//        StepEntity stepLog = stepRepo.findByUserIdAndDate(userId, request.date())
+//                .orElseGet(StepEntity::new);
 
-        stepLog.setUser(user);
-        stepLog.setDate(request.date());
-        stepLog.setCount(request.stepCount().intValue());
+        StepEntity stepEntity = new StepEntity();
 
-        stepRepo.save(stepLog);
+        stepEntity.setUser(user);
+        stepEntity.setDate(request.date());
+        stepEntity.setCount(request.stepCount().intValue());
+
+        stepRepo.save(stepEntity);
 
     }
 
