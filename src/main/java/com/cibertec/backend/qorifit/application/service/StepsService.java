@@ -6,7 +6,9 @@ import com.cibertec.backend.qorifit.infraestructure.persistence.jpa.entity.UserE
 import com.cibertec.backend.qorifit.infraestructure.persistence.jpa.repository.impl.StepRepoImpl;
 import com.cibertec.backend.qorifit.infraestructure.persistence.jpa.repository.impl.UserRepoImpl;
 import com.cibertec.backend.qorifit.infraestructure.web.dto.request.StepsRegister;
+import com.cibertec.backend.qorifit.infraestructure.web.dto.response.StepRecord;
 import com.cibertec.backend.qorifit.infraestructure.web.dto.response.StepsByDate;
+import com.cibertec.backend.qorifit.infraestructure.web.dto.response.StepsDetailed;
 import com.cibertec.backend.qorifit.infraestructure.web.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -82,5 +85,46 @@ public class StepsService {
         return stepsByDates;
     }
 
+    public List<StepsDetailed> getStepsDetailsByDates(LocalDate startDate, LocalDate endDate) {
+
+        Long userId = contextHelper.extractUserId();
+
+        UserEntity user = userRepo.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
+
+        List<StepEntity> stepEntities;
+
+        if (endDate == null) {
+            stepEntities = stepRepo.getStepsByUserIdAndDateSince(user.getId(), startDate);
+        } else {
+            stepEntities = stepRepo.getStepsByUserIdAndDatesRange(userId, startDate, endDate);
+        }
+
+        return stepEntities.stream()
+                .collect(Collectors.groupingBy(StepEntity::getDate))
+                .entrySet().stream()
+                .map(entry -> {
+                    List<StepEntity> daySteps = entry.getValue();
+
+                    List<StepRecord> records = daySteps.stream()
+                            .map(step -> StepRecord.builder()
+                                    .stepCount((long) step.getCount())
+                                    .recordedAt(step.getCreatedAt().toLocalTime())
+                                    .build())
+                            .toList();
+
+                    int dailyTotal = daySteps.stream()
+                            .mapToInt(StepEntity::getCount)
+                            .sum();
+
+                    return StepsDetailed.builder()
+                            .date(entry.getKey())
+                            .records(records)
+                            .totalStepsPerDay(dailyTotal)
+                            .build();
+                })
+                .sorted(Comparator.comparing(StepsDetailed::getDate))
+                .toList();
+    }
 
 }

@@ -4,6 +4,7 @@ import com.cibertec.backend.qorifit.application.service.StepsService;
 import com.cibertec.backend.qorifit.infraestructure.web.dto.ApiResponse;
 import com.cibertec.backend.qorifit.infraestructure.web.dto.request.StepsRegister;
 import com.cibertec.backend.qorifit.infraestructure.web.dto.response.StepsByDate;
+import com.cibertec.backend.qorifit.infraestructure.web.dto.response.StepsDetailed;
 import com.cibertec.backend.qorifit.utils.InternalCodes;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -47,6 +48,22 @@ public class StepController {
         List<StepsByDate> response = stepsService.getStepsByDates(startDate, endDate);
 
         return ResponseEntity.ok(ApiResponse.<List<StepsByDate>>builder()
+                .code(InternalCodes.SUCCESS.getCode())
+                .data(response)
+                .message("Obtained successfully")
+                .build());
+
+    }
+
+    @GetMapping("/details")
+    public ResponseEntity<ApiResponse<?>> getStepsDetails(
+            @RequestParam LocalDate startDate,
+            @RequestParam(required = false) LocalDate endDate
+    ){
+
+        List<StepsDetailed> response = stepsService.getStepsDetailsByDates(startDate, endDate);
+
+        return ResponseEntity.ok(ApiResponse.<List<StepsDetailed> >builder()
                 .code(InternalCodes.SUCCESS.getCode())
                 .data(response)
                 .message("Obtained successfully")
