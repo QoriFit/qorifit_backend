@@ -106,6 +106,7 @@ public class RecipeUseCase {
                 r.getId(),
                 r.getName(),
                 r.getDescription(),
+                r.getInstructions(),
                 r.getCountry() != null ? r.getCountry().getName() : null,
                 r.getImagePath(),
                 r.getEstimatedCalories(),

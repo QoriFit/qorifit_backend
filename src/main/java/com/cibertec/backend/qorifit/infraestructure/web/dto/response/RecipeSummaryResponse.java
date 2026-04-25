@@ -4,6 +4,7 @@ public record RecipeSummaryResponse(
         Long recipeId,
         String name,
         String description,
+        String instructions,
         String countryName,
         String imagePath,
         Integer estimatedCalories,

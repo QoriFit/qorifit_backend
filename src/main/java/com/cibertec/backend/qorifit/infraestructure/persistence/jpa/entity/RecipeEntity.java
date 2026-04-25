@@ -30,6 +30,9 @@ public class RecipeEntity {
     @Column(name = "description", length = 500, nullable = false)
     private String description;
 
+    @Column(name = "instructions", length = 500, nullable = true)
+    private String instructions;
+
     @Column(name = "popularity")
     private Integer popularity;
 
