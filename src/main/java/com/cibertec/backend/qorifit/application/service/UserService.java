@@ -52,10 +52,10 @@ public class UserService {
             }
         }
 
-        if(!user.getImageUrl().equals(userDto.getImageUrl())){
+        if(userDto.getImageUrl() != null){
             user.setImageUrl(userDto.getImageUrl());
-
         }
+
 
         if (userDto.getStatus() != null) {
 
