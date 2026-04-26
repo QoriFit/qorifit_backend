@@ -21,5 +21,8 @@ public class UserData {
     private LocalDate birthDate;
     private String goal;
 
+    private BigDecimal weight;
+    private Long high;
+    
 
 }

@@ -1,12 +1,15 @@
 package com.cibertec.backend.qorifit.infraestructure.web.dto.response;
 
-public record RecipeSummaryResponse(
-        Long recipeId,
-        String name,
-        String description,
-        String instructions,
-        String countryName,
-        String imagePath,
-        Integer estimatedCalories,
-        Integer popularity
-) {}
+import lombok.*;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class RecipeSummaryResponse{
+    private Long recipeId;
+    private String name;
+    private String countryName;
+    private String imagePath;
+    private Integer estimatedCalories;
+}

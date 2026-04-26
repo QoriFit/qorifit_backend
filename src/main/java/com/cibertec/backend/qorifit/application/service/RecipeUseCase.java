@@ -68,16 +68,17 @@ public class RecipeUseCase {
                 .map(this::toIngredientResponse)
                 .toList();
 
-        return new RecipeDetailResponse(
-                recipe.getId(),
-                recipe.getName(),
-                recipe.getDescription(),
-                recipe.getCountry() != null ? recipe.getCountry().getName() : null,
-                recipe.getImagePath(),
-                recipe.getEstimatedCalories(),
-                recipe.getPopularity(),
-                ingredients
-        );
+        return RecipeDetailResponse.builder()
+                .recipeId(recipe.getId())
+                .name(recipe.getName())
+                .description(recipe.getDescription())
+                .instructions(recipe.getInstructions())
+                .countryName(recipe.getCountry() != null ? recipe.getCountry().getName() : null)
+                .imagePath(recipe.getImagePath())
+                .estimatedCalories(recipe.getEstimatedCalories())
+                .popularity(recipe.getPopularity())
+                .ingredients(ingredients)
+                .build();
     }
 
     // ── Helpers ────────────────────────────────────────────────────────────
@@ -102,16 +103,13 @@ public class RecipeUseCase {
     }
 
     private RecipeSummaryResponse toSummary(RecipeEntity r) {
-        return new RecipeSummaryResponse(
-                r.getId(),
-                r.getName(),
-                r.getDescription(),
-                r.getInstructions(),
-                r.getCountry() != null ? r.getCountry().getName() : null,
-                r.getImagePath(),
-                r.getEstimatedCalories(),
-                r.getPopularity()
-        );
+        return RecipeSummaryResponse.builder()
+                .recipeId(r.getId())
+                .name(r.getName())
+                .countryName(r.getCountry() != null ? r.getCountry().getName() : null)
+                .imagePath(r.getImagePath())
+                .estimatedCalories(r.getEstimatedCalories())
+                .build();
     }
 
     private RecipeIngredientResponse toIngredientResponse(RecipeIngredientEntity ri) {
