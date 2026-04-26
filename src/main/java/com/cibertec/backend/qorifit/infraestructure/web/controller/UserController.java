@@ -6,10 +6,7 @@ import com.cibertec.backend.qorifit.infraestructure.web.dto.response.UserDto;
 import com.cibertec.backend.qorifit.utils.InternalCodes;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -30,6 +27,18 @@ public class UserController {
                 .code(InternalCodes.SUCCESS.getCode())
                 .data(response)
                 .message("Obtained successfully")
+                .build());
+    }
+
+
+    @PatchMapping
+    public ResponseEntity<ApiResponse<?>> updateUser(@RequestBody UserDto userDto){
+
+        userService.updateUser(userDto);
+
+        return ResponseEntity.ok(ApiResponse.<Void>builder()
+                .code(InternalCodes.SUCCESS.getCode())
+                .message("Updated successfully")
                 .build());
     }
 }

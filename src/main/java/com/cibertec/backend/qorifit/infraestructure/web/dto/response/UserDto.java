@@ -16,6 +16,6 @@ public class UserDto {
     private String imageUrl;
     private String email;
 
-    private boolean status;
+    private Boolean status;
 
 }
