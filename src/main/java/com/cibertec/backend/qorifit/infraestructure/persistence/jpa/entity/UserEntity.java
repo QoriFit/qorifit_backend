@@ -58,6 +58,9 @@ public class UserEntity {
     @Column(name = "max_calories", nullable = false)
     private BigDecimal maxCaloriesPerDay;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
     @Column(name = "created_at", updatable = false, insertable = false)
     private LocalDateTime createdAt;
 

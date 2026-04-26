@@ -22,8 +22,10 @@ public record RegisterRequest(
         @NotNull
         LocalDate birthDate,
 
+        @NotNull
         BigDecimal weight,
 
+        @NotNull
         Long height,
 
         String goal,
