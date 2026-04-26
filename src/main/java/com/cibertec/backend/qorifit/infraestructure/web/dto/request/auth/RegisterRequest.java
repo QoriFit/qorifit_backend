@@ -24,7 +24,7 @@ public record RegisterRequest(
 
         BigDecimal weight,
 
-        BigDecimal height,
+        Long height,
 
         String goal,
 

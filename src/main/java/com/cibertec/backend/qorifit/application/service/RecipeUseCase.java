@@ -5,11 +5,15 @@ import com.cibertec.backend.qorifit.infraestructure.persistence.jpa.entity.Recip
 import com.cibertec.backend.qorifit.infraestructure.persistence.jpa.entity.UserEntity;
 import com.cibertec.backend.qorifit.infraestructure.persistence.jpa.repository.impl.RecipeRepoImpl;
 import com.cibertec.backend.qorifit.infraestructure.persistence.jpa.repository.impl.UserRepoImpl;
+import com.cibertec.backend.qorifit.infraestructure.web.dto.request.EditRecipe;
+import com.cibertec.backend.qorifit.infraestructure.web.dto.request.RegisterRecipe;
 import com.cibertec.backend.qorifit.infraestructure.web.dto.response.RecipeDetailResponse;
 import com.cibertec.backend.qorifit.infraestructure.web.dto.response.RecipeIngredientResponse;
 import com.cibertec.backend.qorifit.infraestructure.web.dto.response.RecipeSummaryResponse;
+import com.cibertec.backend.qorifit.infraestructure.web.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -43,11 +47,7 @@ public class RecipeUseCase {
                     countryId, name, popular,
                     Boolean.TRUE.equals(sortByPopularity)
             );
-//        } else if (userId != null) {
-//            // No explicit filters — try goal-based filtering
-//            UserEntity user = userRepoImpl.findById(userId)
-//                    .orElseThrow(() -> new RuntimeException("User not found"));
-//            recipes = filterByGoal(user.getGoal());
+
         } else {
             recipes = recipeRepoImpl.findAllActive();
         }
@@ -123,6 +123,51 @@ public class RecipeUseCase {
                 ri.getQuantityGrams(),
                 calories
         );
+    }
+
+
+    @Transactional
+    public void registerNewRecipe(RegisterRecipe request)
+    {
+        RecipeEntity newRecipe = new RecipeEntity();
+        newRecipe.setName(request.recipeName());
+        newRecipe.setDescription(request.description());
+        newRecipe.setInstructions(request.instructions());
+        newRecipe.setEstimatedCalories(request.estimatedCalories());
+        newRecipe.setImagePath(request.imageUrl());
+
+        recipeRepoImpl.save(newRecipe);
+    }
+
+    @Transactional
+    public void editRecipe(EditRecipe request){
+
+        RecipeEntity recipe = recipeRepoImpl.findById(request.recipeId())
+                .orElseThrow(() -> new ResourceNotFoundException("Recipe not found: " + request.recipeId()));
+
+
+        if (request.recipeName() != null) {
+            recipe.setName(request.recipeName());
+        }
+
+        if (request.description() != null) {
+            recipe.setDescription(recipe.getDescription());
+        }
+
+        if (request.instructions() != null) {
+            recipe.setInstructions(request.instructions());
+        }
+
+        if (request.estimatedCalories() != null) {
+            recipe.setEstimatedCalories(request.estimatedCalories());
+        }
+
+        if (request.imagePath() != null) {
+            recipe.setImagePath(request.imagePath());
+        }
+
+        recipeRepoImpl.save(recipe);
+
     }
 }
 

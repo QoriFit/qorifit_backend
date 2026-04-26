@@ -45,7 +45,7 @@ public class UserEntity {
     private BigDecimal weight; // KG
 
     @Column(name = "height", precision = 5, scale = 2)
-    private BigDecimal height; // CM
+    private Long height; // CM
 
     @Column(name = "is_active")
     private Boolean isActive = true;

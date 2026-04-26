@@ -19,7 +19,7 @@ public class RecipeDetailResponse{
     private String instructions;
     private String countryName;
     private String imagePath;
-    private Integer estimatedCalories;
-    private Integer popularity;
+    private Long estimatedCalories;
+    private Long popularity;
     private List<RecipeIngredientResponse> ingredients;
 }

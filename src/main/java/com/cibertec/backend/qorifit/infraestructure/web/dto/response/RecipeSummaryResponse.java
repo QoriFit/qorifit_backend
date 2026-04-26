@@ -11,5 +11,5 @@ public class RecipeSummaryResponse{
     private String name;
     private String countryName;
     private String imagePath;
-    private Integer estimatedCalories;
+    private Long estimatedCalories;
 }

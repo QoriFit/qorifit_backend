@@ -10,9 +10,7 @@ import com.cibertec.backend.qorifit.infraestructure.persistence.jpa.repository.i
 import com.cibertec.backend.qorifit.infraestructure.persistence.jpa.repository.impl.UserRepoImpl;
 import com.cibertec.backend.qorifit.infraestructure.web.dto.request.CaloriesRegister;
 import com.cibertec.backend.qorifit.infraestructure.web.dto.request.IngredientLogItem;
-import com.cibertec.backend.qorifit.infraestructure.web.dto.response.CalorieSummaryResponse;
 import com.cibertec.backend.qorifit.infraestructure.web.dto.response.MealLogEntry;
-import com.cibertec.backend.qorifit.infraestructure.web.dto.response.MealLogEntryResponse;
 import com.cibertec.backend.qorifit.infraestructure.web.dto.response.MealSummaryByDate;
 import com.cibertec.backend.qorifit.infraestructure.web.exception.ResourceNotFoundException;
 import jakarta.validation.Valid;

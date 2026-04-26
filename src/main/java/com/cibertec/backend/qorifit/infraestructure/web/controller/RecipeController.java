@@ -2,6 +2,8 @@ package com.cibertec.backend.qorifit.infraestructure.web.controller;
 
 import com.cibertec.backend.qorifit.application.service.RecipeUseCase;
 import com.cibertec.backend.qorifit.infraestructure.web.dto.ApiResponse;
+import com.cibertec.backend.qorifit.infraestructure.web.dto.request.EditRecipe;
+import com.cibertec.backend.qorifit.infraestructure.web.dto.request.RegisterRecipe;
 import com.cibertec.backend.qorifit.infraestructure.web.dto.response.RecipeDetailResponse;
 import com.cibertec.backend.qorifit.infraestructure.web.dto.response.RecipeSummaryResponse;
 import com.cibertec.backend.qorifit.utils.InternalCodes;
@@ -65,8 +67,31 @@ public class RecipeController {
                 .build());
     }
 
-    private Long extractUserId() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return (Long) auth.getPrincipal();
+
+    @PostMapping
+    public ResponseEntity<ApiResponse<?>> createRecipe(
+            @RequestBody RegisterRecipe request
+    ){
+
+        recipeUseCase.registerNewRecipe(request);
+
+        return ResponseEntity.ok(ApiResponse.<RecipeDetailResponse>builder()
+                .code(InternalCodes.SUCCESS.getCode())
+                .message("Created successfully")
+                .build());
+    }
+
+
+    @PatchMapping
+    public ResponseEntity<ApiResponse<?>> editRecipe(
+            @RequestBody EditRecipe request
+    ){
+
+        recipeUseCase.editRecipe(request);
+
+        return ResponseEntity.ok(ApiResponse.<RecipeDetailResponse>builder()
+                .code(InternalCodes.SUCCESS.getCode())
+                .message("Updated successfully")
+                .build());
     }
 }

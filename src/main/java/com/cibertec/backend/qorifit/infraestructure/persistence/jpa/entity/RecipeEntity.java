@@ -16,7 +16,7 @@ import java.util.List;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "recipes")
-public class RecipeEntity {
+public class    RecipeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +34,7 @@ public class RecipeEntity {
     private String instructions;
 
     @Column(name = "popularity")
-    private Integer popularity;
+    private Long popularity;
 
     @ManyToOne
     @JoinColumn(name = "country_id")
@@ -44,7 +44,7 @@ public class RecipeEntity {
     private String imagePath;
 
     @Column(name = "estimated_calories")
-    private Integer estimatedCalories;
+    private Long estimatedCalories;
 
     @Column(name = "is_active")
     private Boolean isActive = true;

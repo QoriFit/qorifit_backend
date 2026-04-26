@@ -56,6 +56,9 @@ public class AuthUseCase {
                         .maxCaloriesPerDay(user.getMaxCaloriesPerDay())
                         .stepsGoalPerDay(user.getStepsPerDay())
                         .goal(user.getGoal())
+
+                        .weight(user.getWeight())
+                        .height(user.getHeight())
                         .build())
                 .build();
     }
@@ -63,7 +66,7 @@ public class AuthUseCase {
     @Transactional
     public void register(String username, String email,
                          String password, LocalDate birthdate,
-                         BigDecimal weight, BigDecimal height,
+                         BigDecimal weight, Long height,
                          String goal, Long stepsGoal,
                          BigDecimal maxCaloriesPerDay) {
 
