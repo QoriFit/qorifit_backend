@@ -64,17 +64,20 @@ public class AuthUseCase {
     }
 
     @Transactional
-    public void register(String username, String email,
-                         String password, LocalDate birthdate,
-                         BigDecimal weight, Long height,
-                         String goal, Long stepsGoal,
-                         BigDecimal maxCaloriesPerDay) {
-
+    public LoginResponse register(
+            String username, String email,
+            String password, LocalDate birthdate,
+            BigDecimal weight, Long height,
+            String goal, Long stepsGoal,
+            BigDecimal maxCaloriesPerDay) {
 
         String normalizedEmail = email.trim().toLowerCase();
 
         if (userRepo.findByEmail(normalizedEmail).isPresent()) {
-            throw new BusinessException(InternalCodes.DUPLICATED_EMAIL_ADDRESS, "El email ya se encuentra registrado");
+            throw new BusinessException(
+                    InternalCodes.DUPLICATED_EMAIL_ADDRESS,
+                    "El email ya se encuentra registrado"
+            );
         }
 
         UserEntity newUser = UserEntity.builder()
@@ -88,8 +91,11 @@ public class AuthUseCase {
                 .maxCaloriesPerDay(maxCaloriesPerDay)
                 .weight(weight)
                 .isActive(true)
+                .role("user")
                 .build();
 
         userRepo.save(newUser);
+
+        return login(normalizedEmail, password);
     }
 }

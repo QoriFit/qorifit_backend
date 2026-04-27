@@ -50,6 +50,9 @@ public class UserEntity {
     @Column(name = "is_active")
     private Boolean isActive = true;
 
+    @Column(name = "role")
+    private String role = "user";
+
     //Meta diaria por dia
     @Column(name = "steps_per_day", nullable = false)
     private Long stepsPerDay;

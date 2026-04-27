@@ -9,8 +9,10 @@ import com.cibertec.backend.qorifit.infraestructure.web.exception.ResourceNotFou
 import com.cibertec.backend.qorifit.utils.InternalCodes;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -31,37 +33,41 @@ public class UserService {
         ).toList();
     }
 
-    public void updateUser(UserDto userDto){
+
+    @Transactional
+    public void updateUser(UserDto userDto) {
 
         UserEntity user = userRepo.findById(userDto.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        if(!user.getUsername().equals(userDto.getUsername())){
+        if (userDto.getUsername() != null &&
+                !Objects.equals(userDto.getUsername(), user.getUsername())) {
             user.setUsername(userDto.getUsername());
         }
 
-        if(!user.getEmail().equals(userDto.getEmail())){
-            if (userDto.getEmail() != null) {
-                userRepo.findByEmail(userDto.getEmail())
-                        .filter(u -> !u.getId().equals(user.getId()))
-                        .ifPresent(u -> {
-                            throw new BusinessException(InternalCodes.DUPLICATED_EMAIL_ADDRESS,"Email is already in use by another user");
-                        });
+        if (userDto.getEmail() != null &&
+                !Objects.equals(userDto.getEmail(), user.getEmail())) {
 
-                user.setEmail(userDto.getEmail());
-            }
+            userRepo.findByEmail(userDto.getEmail())
+                    .filter(u -> !Objects.equals(u.getId(), user.getId()))
+                    .ifPresent(u -> {
+                        throw new BusinessException(
+                                InternalCodes.DUPLICATED_EMAIL_ADDRESS,
+                                "Email is already in use by another user"
+                        );
+                    });
+
+            user.setEmail(userDto.getEmail());
         }
 
-        if(userDto.getImageUrl() != null){
+        if (userDto.getImageUrl() != null) {
             user.setImageUrl(userDto.getImageUrl());
         }
 
-
         if (userDto.getStatus() != null) {
-
             user.setIsActive(userDto.getStatus());
-
         }
+
         userRepo.save(user);
     }
 }

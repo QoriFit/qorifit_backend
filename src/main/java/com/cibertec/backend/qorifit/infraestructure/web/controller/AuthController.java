@@ -34,11 +34,11 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<?>> register(
+    public ResponseEntity<ApiResponse<LoginResponse>> register(
             @RequestBody @Valid RegisterRequest request
     ){
 
-        authUseCase.register(
+        LoginResponse response = authUseCase.register(
                 request.username(),
                 request.email(),
                 request.password(),
@@ -50,9 +50,9 @@ public class AuthController {
                 request.maxCaloriesPerDay()
         );
 
-        return ResponseEntity.ok(ApiResponse.<Void>builder()
+        return ResponseEntity.ok(ApiResponse.<LoginResponse>builder()
                 .code(InternalCodes.SUCCESS.getCode())
-                //.data(response)
+                .data(response)
                 .message("Registered successfully")
                 .build());
 

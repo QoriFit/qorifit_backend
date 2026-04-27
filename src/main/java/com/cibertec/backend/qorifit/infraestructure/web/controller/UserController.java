@@ -4,6 +4,8 @@ import com.cibertec.backend.qorifit.application.service.UserService;
 import com.cibertec.backend.qorifit.infraestructure.web.dto.ApiResponse;
 import com.cibertec.backend.qorifit.infraestructure.web.dto.response.UserDto;
 import com.cibertec.backend.qorifit.utils.InternalCodes;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +34,7 @@ public class UserController {
 
 
     @PatchMapping
-    public ResponseEntity<ApiResponse<?>> updateUser(@RequestBody UserDto userDto){
+    public ResponseEntity<ApiResponse<?>> updateUser(@RequestBody @Valid UserDto userDto){
 
         userService.updateUser(userDto);
 
