@@ -29,6 +29,7 @@ public class UserService {
                 .username(u.getUsername())
                 .email(u.getEmail())
                 .imageUrl(u.getImageUrl())
+                .status(u.getIsActive())
                 .build()
         ).toList();
     }
